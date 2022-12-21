@@ -25,6 +25,7 @@
             var dijkstra = new Dijkstra(9, new Dijkstra.Node("Istanbul", 0, 0), adj);
             var result = dijkstra.ExeucteAlgorithm();
             
+            // output
             label2.Text = string.Join(',', result);
         }
     }
