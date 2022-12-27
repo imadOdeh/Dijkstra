@@ -69,6 +69,8 @@ namespace Dijkstra
             return finalDistances;
         }
 
+        /// <param name="node">Choosen node</param>
+        /// <param name="finalDistances">Final destination</param>S
         private void Neighbours(Node node, double[] finalDistances)
         {
             double newDistance = -1;
