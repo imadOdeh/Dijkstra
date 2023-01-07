@@ -1,4 +1,5 @@
-﻿
+﻿using PriorityQueues;
+
 namespace Dijkstra
 {
     public class Dijkstra
@@ -7,29 +8,37 @@ namespace Dijkstra
         private HashSet<int> _settledNodes;
         private List<List<Node>> _adj;
         private int _v;
-        private PriorityQueue<Node, double> PQ;
-        //demo 
-        //demo change
+        
+        //We will use 'polymorphism' to implement 'Priority Queue' in multi ways: BinaryHeap, FibonacciHeap, ... etc
+        private IPriorityQueue<Node, double> PQ;
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="v">Count of nodes of graph</param>
         /// <param name="startNode">Start Node that we want to find shortest path from here</param>
         /// <param name="adj">Repersent Graph as List of Linked nodes with distances (weights)</param>
-        public Dijkstra(int v, Node startNode, List<List<Node>> adj)
+        public Dijkstra(int v, Node startNode, List<List<Node>> adj, PQType priorityQueueType)
         {
             _v = v;
             _startNode = startNode;
             _settledNodes = new HashSet<int>();
             _adj = adj;
 
-            PQ = new PriorityQueue<Node, double>(v);
+            switch (priorityQueueType)
+            {
+                case PQType.FibonacciHeapQueue:
+                    PQ = new FibonacciHeap<Node, double>(PriorityQueueType.Minimum);
+                    break;
+                case PQType.MinHeapQueue:
+                    PQ = new BinaryHeap<Node, double>(PriorityQueueType.Minimum);
+                    break;
+                default:
+                    PQ = new PriorityQueue_LinkedList();
+                    break;
+            }
         }
 
-      
-        
-
-    //This is my change
         public double[] ExeucteAlgorithm()
         {
             var finalDistances = new double[_v];
@@ -113,5 +122,12 @@ namespace Dijkstra
                 EdgeCost = cost;
             }
         }
+    }
+
+    public enum PQType
+    {
+        MinHeapQueue,
+        FibonacciHeapQueue,
+        UnorderedLinkedList,
     }
 }

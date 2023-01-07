@@ -31,11 +31,30 @@
                 new List<Dijkstra.Node> { },
             };
 
-            var dijkstra = new Dijkstra(9, new Dijkstra.Node("Istanbul", 0, 0), adj);
+            var pqType = PQType.FibonacciHeapQueue;
+            var checkedRadioButton = groupBox1.Controls.OfType<RadioButton>().FirstOrDefault(n => n.Checked);
+            switch (checkedRadioButton?.Name)
+            {
+                case "FibonacciHeapQueue":
+                    pqType = PQType.FibonacciHeapQueue;
+                    break;
+                case "MinHeapQueue":
+                    pqType = PQType.MinHeapQueue;
+                    break;
+                case "UnorderedLinkedList":
+                    pqType = PQType.UnorderedLinkedList;
+                    break;
+            }
+            
+            var dijkstra = new Dijkstra(9, new Dijkstra.Node("Istanbul", 0, 0), adj, pqType);
+            
+            var now = DateTime.Now;
             var result = dijkstra.ExeucteAlgorithm();
+            var duration = (DateTime.Now - now).TotalMilliseconds;
             
             // output
             label2.Text = string.Join(',', result);
+            durationLabel.Text = $"Duration: {Math.Round(duration, 4)} ms / {Math.Round(duration/1000, 4)} s";
         }
     }
 }
