@@ -9,28 +9,6 @@
 
         private void button2_Click(object sender, EventArgs e)
         {
-            var adj = new List<List<Dijkstra.Node>>()
-            {
-                // Node 0 Istanbul 
-                new List<Dijkstra.Node> { new Dijkstra.Node("İzmit", 1, 200), new Dijkstra.Node("Tekirdağ", 2, 150) },
-                // Node 1 İzmit
-                new List<Dijkstra.Node> { new Dijkstra.Node("Sakarya", 3, 250), new Dijkstra.Node("Bursa", 4, 300) },
-                // Node 2 Tekirdağ
-                new List<Dijkstra.Node> { new Dijkstra.Node("Edirne", 5, 100) },
-                // Node 3 Sakarya
-                new List<Dijkstra.Node> { new Dijkstra.Node("Bolu", 6, 100), new Dijkstra.Node("Bilecek", 7, 300) },
-                // Node 4 Bursa
-                new List<Dijkstra.Node> { new Dijkstra.Node("Bilecek", 7, 100) },
-                // Node 5 Edirne
-                new List<Dijkstra.Node> { },
-                // Node 6 Bolu
-                new List<Dijkstra.Node> { new Dijkstra.Node("Ankara", 8, 100) },
-                // Node 7 Bilecek
-                new List<Dijkstra.Node> { new Dijkstra.Node("Ankara", 8, 100) },
-                // Node 8 Ankara
-                new List<Dijkstra.Node> { },
-            };
-
             var pqType = PQType.FibonacciHeapQueue;
             var checkedRadioButton = groupBox1.Controls.OfType<RadioButton>().FirstOrDefault(n => n.Checked);
             switch (checkedRadioButton?.Name)
@@ -45,16 +23,51 @@
                     pqType = PQType.UnorderedLinkedList;
                     break;
             }
-            
-            var dijkstra = new Dijkstra(9, new Dijkstra.Node("Istanbul", 0, 0), adj, pqType);
-            
+
+            var adj = ImportGraphFromFile.ImportExcel(filePathTextBox.Text, out var vertexes);
+
+            var dijkstra = new Dijkstra(vertexes.Count, new Dijkstra.Node(vertexes[0], 0, 0), adj, pqType);
+
             var now = DateTime.Now;
             var result = dijkstra.ExeucteAlgorithm();
             var duration = (DateTime.Now - now).TotalMilliseconds;
-            
+
             // output
-            label2.Text = string.Join(',', result);
-            durationLabel.Text = $"Duration: {Math.Round(duration, 4)} ms / {Math.Round(duration/1000, 4)} s";
+            var output = "";
+            for (int i = 1; i < result.Length; i++)
+            {
+                output += $"From {vertexes[0]} to {vertexes[i]}: {result[i]}\n";
+            }
+
+            File.WriteAllText("output.txt", output);
+
+            resultLabel.Text = "The result is saved in 'output.txt' \nin same folder that contains .exe file";
+            durationLabel.Text = $"Duration: {Math.Round(duration, 4)} ms / {Math.Round(duration / 1000, 4)} s";
+        }
+
+        private void importExcel_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog1 = new OpenFileDialog
+            {
+                InitialDirectory = @"C:\",
+                Title = "Browse Excel Files",
+
+                CheckFileExists = true,
+                CheckPathExists = true,
+
+                DefaultExt = "xlsx",
+                Filter = "Excel Files|*.xlsx;",
+                FilterIndex = 2,
+                RestoreDirectory = true,
+
+                ReadOnlyChecked = true,
+                ShowReadOnly = true
+            };
+
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                filePathTextBox.Text = openFileDialog1.FileName;
+            }
         }
     }
 }
