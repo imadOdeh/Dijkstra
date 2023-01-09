@@ -9,6 +9,15 @@
 
         private void button2_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(filePathTextBox.Text))
+            {
+                resultLabel.Text = "Please Enter excel file name in text box";
+                resultLabel.ForeColor = Color.Red;
+                durationLabel.Text = "";
+
+                return;
+            }
+
             var pqType = PQType.FibonacciHeapQueue;
             var checkedRadioButton = groupBox1.Controls.OfType<RadioButton>().FirstOrDefault(n => n.Checked);
             switch (checkedRadioButton?.Name)
@@ -41,6 +50,7 @@
 
             File.WriteAllText("output.txt", output);
 
+            resultLabel.ForeColor = Color.Black;
             resultLabel.Text = "The result is saved in 'output.txt' \nin same folder that contains .exe file";
             durationLabel.Text = $"Duration: {Math.Round(duration, 4)} ms / {Math.Round(duration / 1000, 4)} s";
         }
